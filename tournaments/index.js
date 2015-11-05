@@ -252,11 +252,7 @@ Tournament = (function () {
 			return;
 		}
 
-		if (!isAllowAlts) {
-			for (var i = 0; i < users.length; i++) {
-				if (users[i].latestIp === user.latestIp) {
-					output.sendReply('|tournament|error|AltUserAlreadyAdded');
-					return;
+		
 				}
 			}
 		}
