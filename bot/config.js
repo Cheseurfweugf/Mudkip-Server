@@ -4,8 +4,8 @@
 // If you really don't know how to do this... Run `node getserver.js URL`.
 // Fill in the URL of the client where `URL` is.
 // For example: `node getserver.js http://example-server.psim.us/`
-exports.server = 'server-mudkipguy.rhcloud.com';
-exports.port = 8000;
+exports.server = 'leaf-megaforever.rhcloud.com';
+exports.port = 80;
 
 // This is the server id.
 // To know this one, you should check where the AJAX call 'goes' to when you
@@ -13,11 +13,11 @@ exports.port = 8000;
 // For example, on the Smogon server, it will say somewhere in the URL
 // ~~showdown, meaning that the server id is 'showdown'.
 // If you really don't know how to check this... run the said script above.
-exports.serverid = 'server-mudkipguy.rhcloud.com';
+exports.serverid = 'leaf-megaforever.rhcloud.com';
 
 // The nick and password to log in with
 // If no password is required, leave pass empty
-exports.nick = 'PokeCommBot';
+exports.nick = 'Leaf Guardian★';
 exports.pass = 'filler';
 
 // The rooms that should be joined.
@@ -33,7 +33,7 @@ exports.privaterooms = ['staff'];
 // Note that using / and ! might be 'dangerous' since these are used in
 // Showdown itself.
 // Using only alphanumeric characters and spaces is not allowed.
-exports.commandcharacter = '.';
+exports.commandcharacter = '+';
 
 // The default rank is the minimum rank that can use a command in a room when
 // no rank is specified in settings.json
@@ -59,10 +59,10 @@ exports.debuglevel = 3;
 
 // Users who can use all commands regardless of their rank. Be very cautious
 // with this, especially on servers other than main.
-exports.excepts = ['mudkipguy'];
+exports.excepts = ['chesnaught-mega'];
 
 // Whitelisted users are those who the bot will not enforce moderation for.
-exports.whitelist = ['PokeCommBot','mudkipguy'];
+exports.whitelist = ['mcmary','chesnaught-mega'];
 
 // Users in this list can use the regex autoban commands. Only add users who know how to write regular expressions and have your complete trust not to abuse the commands.
 exports.regexautobanwhitelist = [];
