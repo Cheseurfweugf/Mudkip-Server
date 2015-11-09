@@ -237,7 +237,15 @@ exports.grouplist = [
 		root: true,
 		globalonly: true
 	},
-	{
+	{       symbol: '≈',
+		id: "coder",
+		name: "Coder",
+		inherit: '#',
+		jurisdiction: 'u',
+		roomleader: true,
+		roomonly: true
+		globalonly: true
+		
 		symbol: '#',
 		id: "owner",
 		name: "Room Owner",
@@ -245,6 +253,7 @@ exports.grouplist = [
 		jurisdiction: 'u',
 		roomleader: true,
 		roomonly: true
+		globalonly: true
 	},
 	{
 		symbol: '&',
@@ -256,6 +265,7 @@ exports.grouplist = [
 		roomdriver: true,
 		roomsubdriver: true,
 		roomonly: true,
+		globalonly: true
 		tournamentsmanagement: true,
 		rmall: true
 	},
