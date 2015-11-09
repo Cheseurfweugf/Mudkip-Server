@@ -1,5 +1,5 @@
 // The server ID - a unique ID describing this Showdown server
-exports.serverid = 'leaf';
+exports.serverid = 'http://leaf-megaforever.rhcloud.com';
 
 // The server token - to access the login database and ladder on pokemonshowdown.com
 //   This token must be registered for accessing the ladder, but you will
@@ -7,7 +7,7 @@ exports.serverid = 'leaf';
 exports.servertoken = 'filler';
 
 // The server port - the port to run Pokemon Showdown under
-exports.port = 8000;
+exports.port = 80;
 
 // proxyip - proxy IPs with trusted X-Forwarded-For headers
 //   This can be either false (meaning not to trust any proxies) or an array
