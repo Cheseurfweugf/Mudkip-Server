@@ -1,20 +1,14 @@
-// The server ID - a unique ID describing this Showdown server
-exports.serverid = 'http://leaf-megaforever.rhcloud.com';
-
-// The server token - to access the login database and ladder on pokemonshowdown.com
-//   This token must be registered for accessing the ladder, but you will
-//   still be able to login with an unregistered token.
-exports.servertoken = 'filler';
+'use strict';
 
 // The server port - the port to run Pokemon Showdown under
-exports.port = 80;
+exports.port = 8000;
 
 // proxyip - proxy IPs with trusted X-Forwarded-For headers
 //   This can be either false (meaning not to trust any proxies) or an array
 //   of strings. Each string should be either an IP address or a subnet given
 //   in CIDR notation. You should usually leave this as `false` unless you
 //   know what you are doing.
-exports.proxyip = 'ip/24';
+exports.proxyip = false;
 
 // Pokemon of the Day - put a pokemon's name here to make it Pokemon of the Day
 //   The PotD will always be in the #2 slot (not #1 so it won't be a lead)
@@ -92,11 +86,19 @@ exports.reportbattles = true;
 //   Note that the feature of turning this off is deprecated.
 exports.reportbattlejoins = true;
 
-// moderated chat - prevent unvoiced users from speaking
-//   This should only be enabled in special situations, such as temporarily
-//   when you're dealing with huge influxes of spammy users.
+// whitelist - prevent users below a certain group from doing things
+//   For the modchat settings, false will allow any user to participate, while a string
+//   with a group symbol will restrict it to that group and above. The string
+//   'autoconfirmed' is also supported for chatmodchat and battlemodchat, to restrict
+//   chat to autoconfirmed users.
+//   This is usually intended to be used as a whitelist feature - set these to '+' and
+//   voice every user you want whitelisted on the server.
+
+// chat modchat - default minimum group for speaking in chatrooms; changeable with /modchat
 exports.chatmodchat = false;
+// battle modchat - default minimum group for speaking in battles; changeable with /modchat
 exports.battlemodchat = false;
+// pm modchat - minimum group for PMing other users, challenging other users, and laddering
 exports.pmmodchat = false;
 
 // forced timer - force the timer on for all battles
@@ -133,7 +135,7 @@ exports.consoleips = ['127.0.0.1'];
 exports.watchconfig = true;
 
 // logchat - whether to log chat rooms.
-exports.logchat = true;
+exports.logchat = false;
 
 // logchallenges - whether to log challenge battles. Useful for tournament servers.
 exports.logchallenges = false;
@@ -162,7 +164,7 @@ exports.inactiveuserthreshold = 1000 * 60 * 60;
 // Your server *must* be registered in order for your custom avatars to be
 // displayed in the client.
 exports.customavatars = {
-	'ppn':'charizard_ppn.gif',
+	//'userid': 'customavatar.png'
 };
 
 // Tournament announcements
@@ -175,12 +177,12 @@ exports.tourannouncements = [/* roomids */];
 // appealurl - specify a URL containing information on how users can appeal
 // disciplinary actions on your section. You can also leave this blank, in
 // which case users won't be given any information on how to appeal.
-exports.appealurl = 'Will be updated soon!';
+exports.appealurl = '';
 
 // replsocketprefix - the prefix for the repl sockets to be listening on
 // replsocketmode - the file mode bits to use for the repl sockets
 exports.replsocketprefix = './logs/repl/';
-exports.replsocketmode = 0600;
+exports.replsocketmode = 0o600;
 
 // permissions and groups:
 //   Each entry in `grouplist' is a seperate group. Some of the members are "special"
@@ -210,6 +212,8 @@ exports.replsocketmode = 0600;
 //     - promote: Promoting and demoting. Will only work if the target user's current
 //                  group and target group are both in jurisdiction.
 //     - room<rank>: /roompromote to <rank> (eg. roomvoice)
+//     - makeroom: Create/delete chatrooms, and set modjoin/roomdesc/privacy
+//     - editroom: Set modjoin/privacy only for battles/groupchats
 //     - ban: Banning and unbanning.
 //     - mute: Muting and unmuting.
 //     - lock: locking (ipmute) and unlocking.
@@ -237,115 +241,97 @@ exports.grouplist = [
 		root: true,
 		globalonly: true
 	},
-	{       symbol: '≈',
-		id: "coder",
-		name: "Coder",
-		inherit: '#',
-		jurisdiction: 'u',
-		roomleader: true,
-		roomonly: true
-		globalonly: true
-		
-		symbol: '#',
-		id: "owner",
-		name: "Room Owner",
-		inherit: '&',
-		jurisdiction: 'u',
-		roomleader: true,
-		roomonly: true
-		globalonly: true
-	},
 	{
 		symbol: '&',
 		id: "leader",
 		name: "Leader",
 		inherit: '@',
+		jurisdiction: '@u',
+		promote: 'u',
+		roomowner: true,
+		roommod: true,
+		roomdriver: true,
+		forcewin: true,
+		declare: true,
+		modchatall: true,
+		rangeban: true,
+		makeroom: true,
+		editroom: true,
+		potd: true,
+		disableladder: true,
+		globalonly: true,
+		tournamentsmanagement: true
+	},
+	{
+		symbol: '#',
+		id: "owner",
+		name: "Room Owner",
+		inherit: '@',
 		jurisdiction: 'u',
 		roommod: true,
 		roomdriver: true,
-		roomsubdriver: true,
+		editroom: true,
+		declare: true,
+		modchatall: true,
 		roomonly: true,
-		globalonly: true
-		tournamentsmanagement: true,
-		rmall: true
+		tournamentsmanagement: true
 	},
 	{
-		symbol: '-',
-		id: "battleplayer",
-		name: "Battle Player",
-		inherit: ' ',
-		broadcast: true,
-		joinbattle: true,
+		symbol: '\u2605',
+		id: "player",
+		name: "Player",
+		inherit: '+',
 		roomvoice: true,
 		modchat: true,
 		roomonly: true,
-		privateroom: true,
-		modchatall: true
+		editroom: true,
+		joinbattle: true
 	},
 	{
 		symbol: '@',
 		id: "mod",
 		name: "Moderator",
 		inherit: '%',
-		jurisdiction: '@u',
+		jurisdiction: 'u',
 		ban: true,
 		modchat: true,
 		roomvoice: true,
+		forcerename: true,
 		ip: true,
-		modchatall: true,
-		rangeban: true,
-		gdeclare: true,
-		clearall: true,
-		roomplayer: true
+		alts: '@u',
+		tournaments: true
 	},
 	{
 		symbol: '%',
 		id: "driver",
 		name: "Driver",
-		inherit: '=',
-		jurisdiction: 'u'
-	},
-	{
-		symbol: '=',
-		id: "subdriver",
-		name: "Subdriver",
 		inherit: '+',
 		jurisdiction: 'u',
-		warn: true,
+		announce: true,
+		warn: '\u2605u',
 		kick: true,
-		mute: true,
+		mute: '\u2605u',
 		lock: true,
 		forcerename: true,
 		timer: true,
 		modlog: true,
+		alts: '%u',
 		bypassblocks: 'u%@&~',
 		receiveauthmessages: true,
 		tournamentsmoderation: true,
-		jeopardy: true
+		jeopardy: true,
+		joinbattle: true
 	},
 	{
 		symbol: '+',
 		id: "voice",
 		name: "Voice",
 		inherit: ' ',
-		tournaments: true,
-		voicetourmoderation: true,
-		declare: true,
-		announce: true,
-		ignorelimits: true,
-		poll: true,
-		joinbattle: true
-	},
-	{
-		symbol: '\u2605',
-		id: "player",
-		name: "Player",
-		inherit: ' '
+		alts: 's',
+		broadcast: true
 	},
 	{
 		symbol: ' ',
-		ip: 's',
-		alts: '@u',
-		broadcast: true
+		ip: 's'
 	}
-];
+	
