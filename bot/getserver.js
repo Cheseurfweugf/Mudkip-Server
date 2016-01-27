@@ -17,7 +17,7 @@ if (process.argv[2]) {
 
 	var received = false;
 	var requestOptions = {
-		hostname: 'http://leaf-megaforever.rhcloud.com',
+		hostname: 'leaf-chesnaughtmega.c9users.io',
 		port: 80,
 		path: '/crossdomain.php?host=' + serverUrl + '&path=',
 		method: 'GET'
